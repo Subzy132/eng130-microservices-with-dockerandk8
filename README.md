@@ -2,7 +2,7 @@
 
 ![Alt text](/images/monolithdiagram.png)
 
-### What is Micro-services?
+## What is Micro-services?
 
 Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are
 
@@ -14,7 +14,7 @@ Microservices - also known as the microservice architecture - is an architectura
 
 The microservice architecture enables the rapid, frequent and reliable delivery of large, complex applications. It also enables an organization to evolve its technology stack.
 
-### What is Docker?
+## What is Docker?
 
 Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly. With Docker, you can manage your infrastructure in the same ways you manage your applications. By taking advantage of Docker’s methodologies for shipping, testing, and deploying code quickly, you can significantly reduce the delay between writing code and running it in production.
 
@@ -28,7 +28,7 @@ Some benefits are:
 - Ease of moving and maintaining your applications
 - Better security, less access needed to work with the code running inside containers, and fewer software dependencies
 
-### Microservices vs Monolith
+## Microservices vs Monolith
 
 **Monolith**
 | Advantages | Disadvantages|
@@ -48,8 +48,12 @@ Some benefits are:
 | If there’s any update in one of the microservices, then we need to redeploy only that microservice. | Skilled developers are required to work with microservices architecture, which can identify the microservices and manage their inter-communications.
 | Microservices are self-contained and, hence, deployed independently. Their start-up and deployment times are relatively less. | Independent deployment of microservices is complicated.
 
+## Installing Docker
 
-### Docker shell commands
+1. Go to this website [Docker](https://www.docker.com/products/docker-desktop/)
+2. Follow the instructions to downloading for mac
+3. run `docker --version`
+## Docker shell commands
 
 - `docker --version`  - should get the version 20.11
 -  `docker` - gets the cheat sheet for docker
@@ -85,7 +89,7 @@ Some benefits are:
 - Run `docker tag nginx:latest subhaanh00/eng130-microservice:latest` to change the tag
 - I then ran `docker push subhaanh00/eng130-microservice:latest` making sure that i am logged into the docker app
 
-### Docker Cheat Sheet
+## Docker Cheat Sheet
 
 ```bash
 
@@ -132,7 +136,7 @@ Commands:
   wait        Block until one or more containers stop, then print their exit codes
 ```
 
-### Automation example
+## Automation example
 
 - `cd` into the same location where the `index.html` file is for ease of use. But you can have the file anywhere but you just have to put the correct file path
 - Run `nano Dockerfile` to create our automation script 
@@ -176,7 +180,7 @@ CMD ["nginx", "-g", "daemon off;"]
 
 Here is what the web page should look like if the set up is working. 
 
-### Node app task
+## Node app task
 
 1. `mkdir eng130-node-app` - made new directory
 2. Copy and pasted `app` folder into new folder
@@ -203,12 +207,12 @@ CMD ["npm", "start"]
 6. Then to see if the image is working run `docker run -d -p 3000:3000 subhaanh00/eng130-microservice`
 7. Put `localhost:3000` into the browser and the website should be up and running
 
-### Slimming down the project ready for production
+## Slimming down the project ready for production
 
 1. I moved the `Dockerfile` inside the app folder
 2. Commented out the previous code I had in there 
 3. Added new code that has two layers. one for dev env and one for production
-**Dockerfile**
+**Dockerfile(app)**
 
 ```Docker
 FROM node as app
@@ -235,13 +239,49 @@ CMD ["node", "app.js"]
 
 **Smaller image sizes are quicker to transfer and deploy**
 
-### App to DB Task
+## App to DB Task
 
 1. Pulled mongo image using `docker pull mongo`
 2. I then made a directory called `db` and made a new `docker file`
 3. I made a `mongod.conf` file and then copy and pasted what i got from SSHing in and going to that directory and pulling up that file
 4. I made a `Dockerfile` in the db file and add this code 
+
+**Dockerfile(db)**
+
+```Docker
+FROM mongo:latest
+LABEL MAINTAINER=subhaan
+WORKDIR /usr/src/db/
+COPY ./mongod.conf /etc/
+EXPOSE 27017
+CMD ["mongod"]
+```
+
+5. I Have then made a `docker-compose.yml` file to automate starting up both images
+
+**docker-compose.yml**
+
 ```Docker
 
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
 
+  app:
+    build: ./app/app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mongodb://db:27017/posts
+    depends_on:
+      - db
 ```
+6. I added `CMD [ "node", "seeds/seed.js"]` at the second to last line of the `Dockerfile(app)` file
+7. `cd` back to the `eng130-microservices` directory 
+8. run `docker-compose up` 
+9. if everything works then the localhost should be running
+
+![Alt text](/images/running.png)
