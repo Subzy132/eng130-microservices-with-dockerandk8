@@ -131,3 +131,74 @@ Commands:
   version     Show the Docker version information
   wait        Block until one or more containers stop, then print their exit codes
 ```
+
+### Automation example
+
+- `cd` into the same location where the `index.html` file is for ease of use. But you can have the file anywhere but you just have to put the correct file path
+- Run `nano Dockerfile` to create our automation script 
+
+
+**Dockerfile**
+```Docker
+# docker run nginx - base image
+FROM nginx
+
+# Who is creating this
+
+LABEL MAINTAINER=subhaan
+
+# created index.html profile - copy tp container
+
+# default location /usr/share/nginx/html/
+
+COPY index.html /usr/share/nginx/html/
+COPY subhaan.png /usr/share/nginx/html/
+
+# docker run -d -p 80:80 name
+
+# port number 
+
+EXPOSE 80
+
+# launch server
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+- Run `docker build -t subhaanh00/eng130-microservice .`  to build the script we just made
+- Run `docker ps` to see if port 80 is being used
+- Run `docker rm [Process id] -f ` because I had a process running on port 80
+- Run `docker run -d -p 80:80 subhaanh00/eng130-microservice` to run the image i've just created
+- check `localhost` on browser to see if it works
+- Any changes you make to the image you need to commit the changes so Run `docker commit [process id] [username]/[repo name]:latest`
+- If it does work then I can push it to my docker hub using `docker push subhaanh00/eng130-microservice` 
+
+![Alt text](/images/indexpage.png)
+
+Here is what the web page should look like if the set up is working. 
+
+### Node app task
+
+1. `mkdir eng130-node-app` - made new directory
+2. Copy and pasted `app` folder into new folder
+3. `nano Dockerfile` - made a new script file
+```Docker
+# Copy over the app folder and have it running on node
+
+FROM nginx
+LABEL MAINTAINER=subhaan
+COPY app /home/
+EXPOSE 80
+EXPOSE 3000
+RUN apt-get update
+RUN apt-get install -y
+RUN apt-get install software-properties-common -y
+RUN apt-get install npm -y
+CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /home/app
+RUN npm install
+CMD ["npm", "start"]
+```
+4. Save the file
+5. Run the build using `docker build -t subhaanh00/eng130-microservice .`
+6. Then to see if the image is working run `docker run -d -p 3000:3000 subhaanh00/eng130-microservice`
+7. Put `localhost:3000` into the browser and the website should be up and running
