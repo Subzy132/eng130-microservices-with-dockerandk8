@@ -72,7 +72,7 @@ Some benefits are:
 -  Run `cd /usr/share/nginx/html`
 
 
-### Task
+### Copy CV Task
 
 - the command to copy file from local host to docker is `docker cp /hostfile  (container_id):/(to_the_place_you_want_the_file_to_be)` 
 - So I then gathered my `host file` location on my local host
@@ -202,3 +202,46 @@ CMD ["npm", "start"]
 5. Run the build using `docker build -t subhaanh00/eng130-microservice .`
 6. Then to see if the image is working run `docker run -d -p 3000:3000 subhaanh00/eng130-microservice`
 7. Put `localhost:3000` into the browser and the website should be up and running
+
+### Slimming down the project ready for production
+
+1. I moved the `Dockerfile` inside the app folder
+2. Commented out the previous code I had in there 
+3. Added new code that has two layers. one for dev env and one for production
+**Dockerfile**
+
+```Docker
+FROM node as app
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install -g npm@7.20.6
+COPY . .
+EXPOSE 3000
+CMD ["node", "app.js"]
+
+# Production ready image
+FROM node:alpine
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install -g npm@7.20.6
+COPY --from=app /usr/src/app /usr/src/app
+EXPOSE 3000
+CMD ["node", "app.js"]
+```
+
+4. I then built this using `docker build -t subhaanh00/eng130-microservice .`
+5. I then Ran this image using `docker run -d -p 3000:3000 subhaanh00/eng130-microservice`
+6. If i now run `Docker images` you can see that the original image was 848mb but the new image has been slimmed down all the way to 215mb ready for production. 
+
+**Smaller image sizes are quicker to transfer and deploy**
+
+### App to DB Task
+
+1. Pulled mongo image using `docker pull mongo`
+2. I then made a directory called `db` and made a new `docker file`
+3. I made a `mongod.conf` file and then copy and pasted what i got from SSHing in and going to that directory and pulling up that file
+4. I made a `Dockerfile` in the db file and add this code 
+```Docker
+
+
+```
