@@ -67,4 +67,20 @@ Some benefits are:
 -  `docker stop [process id]` - stops the process running with all the 
 -  `docker start [process id]` -  starts the process where it left off
 -  `docker exec -it [process id] bash` - be able to execute shell commands in the process provided
--  
+-  Once inside you need to run `apt update`
+-  then `apt install sudo`
+-  Run `cd /usr/share/nginx/html`
+
+
+### Task
+
+- the command to copy file from local host to docker is `docker cp /hostfile  (container_id):/(to_the_place_you_want_the_file_to_be)` 
+- So I then gathered my `host file` location on my local host
+- I took note of the `container id` 
+- I then ssh into the container and to the destination location and ran `pwd` and took note of the outcome.
+- I made my `index.html` file
+- On my terminal i made the command `docker cp /Users/subhaanadmin/eng130-microservices/index.html  54ca8fdcbf20:/usr/share/nginx/html` and was able to copy my file. 
+- I then created a new repository on docker hub
+- Run `docker images`
+- Run `docker tag nginx:latest subhaanh00/eng130-microservice:latest` to change the tag
+- I then ran `docker push subhaanh00/eng130-microservice:latest` making sure that i am logged into the docker app
