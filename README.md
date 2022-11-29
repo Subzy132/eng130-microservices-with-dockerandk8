@@ -48,6 +48,10 @@ Some benefits are:
 | If there’s any update in one of the microservices, then we need to redeploy only that microservice. | Skilled developers are required to work with microservices architecture, which can identify the microservices and manage their inter-communications.
 | Microservices are self-contained and, hence, deployed independently. Their start-up and deployment times are relatively less. | Independent deployment of microservices is complicated.
 
+## Containerisation vs Virtualisation
+
+Virtualisation uses 
+
 ## Installing Docker
 
 1. Go to this website [Docker](https://www.docker.com/products/docker-desktop/)

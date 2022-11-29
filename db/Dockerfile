@@ -1,4 +1,4 @@
-FROM mongo:latest
+FROM mongo
 
 LABEL MAINTAINER=subhaan
 
