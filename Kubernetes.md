@@ -84,3 +84,56 @@ spec:
 ![Alt text](/images/kubernetes.png)
 
 ## Building node app deployment
+
+**node-deploy.yml**
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparta-app-deployment
+
+spec: 
+  selector:
+    matchLabels:
+      app: sparta-app
+  
+  replicas: 3
+
+  template:
+    metadata:
+      labels:
+        app: sparta-app
+    
+    spec:
+      containers:
+      - image: agelemerov/eng130-angel-docker:latest
+        imagePullPolicy: Always
+        name: eng130-angel-docker
+        ports: 
+        - containerPort: 3000
+
+```
+
+**node-service.yml**
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sparta-app-service
+
+spec: 
+  selector: 
+    app: sparta-app
+  ports:
+  - port: 3000
+    targetPort: 3000
+  
+
+  type: LoadBalancer
+```
+
+- Run `kubectl create -f node-deploy.yml`
+- Run `kubectl create -f node-service.yml`
+- Run `kubectl get svc`
+- Sparta app should run on `http://localhost:3000` 
